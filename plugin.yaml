@@ -1,0 +1,99 @@
+plugins:
+
+  fortinet:
+    executor: central_deployment_agent
+    package_name: cloudify-fortigate-plugin
+    source: cloudify-fortigate-plugin
+    package_version: '0.0.0.2'
+
+node_types:
+
+  cloudify.fortinet.fortigate:
+    derived_from: cloudify.nodes.Root
+    properties:
+      host:
+        description: >
+          fortigate hostname or IP addresses
+        default: ""
+      username:
+        description: >
+          fortigate username
+        default: ""
+      password:
+        description: >
+          fortigate password
+        default: ""
+      use_ssl:
+        description: >
+          http or https
+        type: boolean
+        default: false
+      verify_ssl:
+        description: >
+          A boolean which controls whether we verify
+          the server's TLS certificate.
+        type: boolean
+        default: true
+
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation: fortinet.fortigate_plugin.tasks.execute
+          inputs:
+            params:
+              default: {}
+            template_file:
+              default: ''
+        configure:
+          implementation: fortinet.fortigate_plugin.tasks.execute
+          inputs:
+            params:
+              default: {}
+            template_file:
+              default: ''
+        start:
+          implementation: fortinet.fortigate_plugin.tasks.execute
+          inputs:
+            params:
+              default: {}
+            template_file:
+              default: ''
+        stop:
+          implementation: fortinet.fortigate_plugin.tasks.execute
+          inputs:
+            params:
+              default: {}
+            template_file:
+              default: ''
+        delete:
+          implementation: fortinet.fortigate_plugin.tasks.execute
+          inputs:
+            params:
+              default: {}
+            template_file:
+              default: ''
+
+relationships:
+  device_in_fmg:
+    derived_from: cloudify.relationships.connected_to
+    target_interfaces:
+      cloudify.interfaces.relationship_lifecycle:
+        establish:
+          implementation: fortinet.fortigate_plugin.tasks.execute_relation
+          inputs:
+            template_file:
+              default: templates/add-fortigate.yaml
+            params:
+              default:
+                fgt_password: "fortinet"
+                fgt_ip: { get_attribute: [TARGET, ip ] }
+                fgt_user: "admin"
+                fgt_name: { get_attribute: [TARGET, server, name ] }
+        unlink:
+          implementation: fortinet.fortigate_plugin.tasks.execute_relation
+          inputs:
+            template_file:
+              default: templates/remove-fortigate.yaml
+            params:
+              default:
+                fgt_name: { get_attribute: [TARGET, server, name ] }
