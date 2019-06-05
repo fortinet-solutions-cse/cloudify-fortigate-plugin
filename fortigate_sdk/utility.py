@@ -100,7 +100,7 @@ def _send_request(call):
                       verify=verify_ssl)
 
     if method == "GET":
-        code, response = fmg_instance.get(url)
+        code, response = fgt_instance.get(url)
         logger.debug('---> Method: {} \n code: {} \n response: \n {}'.format(method, code, response))
 
         # if method == "UPDATE":
