@@ -22,7 +22,6 @@ from . import LOGGER_NAME
 from .exceptions import (
     NonRecoverableResponseException,
     RecoverableResponseException)
-import fortiosapi
 
 logger = logging.getLogger(LOGGER_NAME)
 
