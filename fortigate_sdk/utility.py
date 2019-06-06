@@ -70,7 +70,7 @@ def process(params, template, request_props):
 def _send_request(call):
     logger.info(
         '_send_request request_props:{}'.format(call))
-    host = call.get('host')
+    #host = call.get('host')
     username = call.get('username')
     password = call.get('password')
     use_ssl = call.get('use_ssl', False)
