@@ -23,7 +23,7 @@ from .exceptions import (
     NonRecoverableResponseException,
     RecoverableResponseException)
 
-import fortiosapi
+from fortiosapi import FortiOSAPI
 
 logger = logging.getLogger(LOGGER_NAME)
 
