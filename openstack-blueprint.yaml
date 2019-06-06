@@ -39,6 +39,67 @@ dsl_definitions:
 #    region: { get_secret: region }
 
 node_templates:
+  fortigate:
+    type: cloudify.openstack.nodes.Server
+    properties:
+      server:
+        image_name: { get_input: fos_image }
+        flavor_name: { get_input: fos_flavor }
+        #useless key_name for fortinet but mandatory for openstack
+        key_name: { get_input: key_name }
+      agent_config:
+        install_method: none # do not install agent
+      ##openstack_config: *openstack_config
+      management_network_name: { get_input: mgmt_network_name }
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          inputs:
+            args:
+              userdata: |
+                #FOS VM Config File
+                config system interface
+                edit port1
+                 set mode dhcp
+                 set allowaccess ping https ssh http snmp fgfm
+                 set defaultgw enable
+                next
+                edit port2
+                set mode dhcp
+                set allowaccess ping
+                 set defaultgw disable
+                next
+                edit port3
+                set mode dhcp
+                set allowaccess ping
+                 set defaultgw disable
+                next
+                end
+                config firewall policy
+                edit 1
+                set name "Allow any any"
+                set srcintf "any"
+                set dstintf "any"
+                set srcaddr "all"
+                set dstaddr "all"
+                set action accept
+                set schedule "always"
+                set service "ALL"
+                set nat enable
+                next
+                end
+    relationships:
+      - target: fos_floating_ip
+        type: cloudify.openstack.server_connected_to_floating_ip
+      - target: left_port
+        type: cloudify.relationships.connected_to
+      - target: right_network
+        type: cloudify.relationships.connected_to
+#      - target: right_subnet
+#        type: cloudify.relationships.depends_on
+#      - target: my_security_group
+#        type: cloudify.openstack.server_connected_to_security_group
+#not compatible with portsecurity disabled
 
   fos_floating_ip:
     type: cloudify.openstack.nodes.FloatingIP
@@ -149,72 +210,3 @@ node_templates:
 
 
 
-  fortigate:
-    type: cloudify.openstack.nodes.Server
-    properties:
-      server:
-        image_name: { get_input: fos_image }
-        flavor_name: { get_input: fos_flavor }
-        #useless key_name for fortinet but mandatory for openstack
-        key_name: { get_input: key_name }
-      agent_config:
-        install_method: none # do not install agent
-      ##openstack_config: *openstack_config
-      management_network_name: { get_input: mgmt_network_name }
-    interfaces:
-      cloudify.interfaces.lifecycle:
-        create:
-          inputs:
-            args:
-              userdata: |
-                #FOS VM Config File
-                config system interface
-                edit port1
-                 set mode dhcp
-                 set allowaccess ping https ssh http snmp fgfm
-                 set defaultgw enable
-                next
-                edit port2
-                set mode dhcp
-                set allowaccess ping
-                 set defaultgw disable
-                next
-                edit port3
-                set mode dhcp
-                set allowaccess ping
-                 set defaultgw disable
-                next
-                end
-                config firewall policy
-                edit 1
-                set name "Allow any any"
-                set srcintf "any"
-                set dstintf "any"
-                set srcaddr "all"
-                set dstaddr "all"
-                set action accept
-                set schedule "always"
-                set service "ALL"
-                set nat enable
-                next
-                end
-    relationships:
-      - target: fos_floating_ip
-        type: cloudify.openstack.server_connected_to_floating_ip
-      - target: left_port
-        type: cloudify.relationships.connected_to
-      - target: right_network
-        type: cloudify.relationships.connected_to
-#      - target: right_subnet
-#        type: cloudify.relationships.depends_on
-#      - target: my_security_group
-#        type: cloudify.openstack.server_connected_to_security_group
-#not compatible with portsecurity disabled
-
-  fortigate_api:
-    type: cloudify.fortinet.fortigate
-    properties:
-      host: { get_attribute: [fortigate, ip ] }
-      password: "fortinet"
-      username: "admin"
-      verify_ssl: False

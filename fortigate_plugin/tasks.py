@@ -30,16 +30,18 @@ def execute(params, template_file, **kwargs):
             'Processing finished. No template file provided.')
         return
 
-    ctx.logger.debug(
+    ctx.logger.info(
         'Execute:\n'
         'params: {}\n'
         'template_file: {}'.format(params, template_file))
 
     runtime_properties = ctx.instance.runtime_properties.copy()
-    ctx.logger.debug(
-        'Runtime properties: {}'.format(runtime_properties))
+
+    ctx.logger.info(
+        'Runtime properties nics[0]: {}'.format(runtime_properties["nics"]))
+
     #Replace host config with runtime propertie (instead of rearchitect the plugin)
-    #params['host'] = runtime_properties['ipv4_address']
+#    params['host'] = params['fgt_ip']
     runtime_properties.update(params)
 
     ctx.logger.debug(
