@@ -27,11 +27,9 @@ setuptools.setup(
 #              'fortigate_sdk.pyfmg.pyFMG'],
     license='LICENSE',
     install_requires=[
-        'fortiosapi',
-        'cloudify-plugins-common>=3.4.2',
+        "fortiosapi",
+        'cloudify-plugins-common',
         'cloudify-rest-client>=4.0',
-        'Jinja2>=2.7.2',  # for template support
-        'pycrypto',
-        'pyyaml',
-        'xmltodict']
+        'Jinja2==2.7.2',  # for template support version forced by cloudify common
+        'pyyaml']
 )

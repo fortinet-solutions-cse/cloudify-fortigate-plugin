@@ -34,6 +34,7 @@ node_types:
           the server's TLS certificate.
         type: boolean
         default: true
+        #TODO# add VDOM
 
     interfaces:
       cloudify.interfaces.lifecycle:
@@ -45,82 +46,6 @@ node_types:
             template_file:
               default: ''
         configure:
-          implementation: fortinet.fortigate_plugin.tasks.execute
-          inputs:
-            params:
-              default: {}
-            template_file:
-              default: ''
-        start:
-          implementation: fortinet.fortigate_plugin.tasks.execute
-          inputs:
-            params:
-              default: {}
-            template_file:
-              default: ''
-        stop:
-          implementation: fortinet.fortigate_plugin.tasks.execute
-          inputs:
-            params:
-              default: {}
-            template_file:
-              default: ''
-        delete:
-          implementation: fortinet.fortigate_plugin.tasks.execute
-          inputs:
-            params:
-              default: {}
-            template_file:
-              default: ''
-
-
-### define a type dervied from openstack to extend the type for fortigate purpose.
-
-  cloudify.openstack.nodes.Fortigate:
-    derived_from: cloudify.openstack.nodes.Server
-    properties:
-      username:
-        description: >
-          fortigate username
-        default: ""
-      password:
-        description: >
-          fortigate password
-        default: ""
-      use_ssl:
-        description: >
-          http or https
-        type: boolean
-        default: false
-      verify_ssl:
-        description: >
-          A boolean which controls whether we verify
-          the server's TLS certificate.
-        type: boolean
-        default: true
-      vdom:
-        description: >
-          vdom of the fortigate to use, can use global here if necessary
-        type: string
-        default: "root"
-
-    interfaces:
-      cloudify.interfaces.lifecycle:
-        create:
-          implementation: fortinet.fortigate_plugin.tasks.execute
-          inputs:
-            params:
-              default: {}
-            template_file:
-              default: ''
-        configure:
-          implementation: fortinet.fortigate_plugin.tasks.execute
-          inputs:
-            params:
-              default: {}
-            template_file:
-              default: ''
-        start:
           implementation: fortinet.fortigate_plugin.tasks.execute
           inputs:
             params:
@@ -131,6 +56,13 @@ node_types:
                 fgt_name: { get_attribute: [SELF, server, name ] }
             template_file:
               default: templates/license_check.yaml
+        start:
+          implementation: fortinet.fortigate_plugin.tasks.execute
+          inputs:
+            params:
+              default: {}
+            template_file:
+              default: ''
         stop:
           implementation: fortinet.fortigate_plugin.tasks.execute
           inputs:
@@ -145,4 +77,5 @@ node_types:
               default: {}
             template_file:
               default: ''
+
 

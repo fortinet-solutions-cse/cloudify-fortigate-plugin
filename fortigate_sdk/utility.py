@@ -12,9 +12,10 @@
 #    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    * See the License for the specific language governing permissions and
 #    * limitations under the License
-import yaml
-import logging
 import ast
+import logging
+
+import yaml
 from jinja2 import Template
 
 from . import LOGGER_NAME
@@ -22,15 +23,11 @@ from .exceptions import (
     NonRecoverableResponseException,
     RecoverableResponseException)
 
-import fortiosapi
-
-
 logger = logging.getLogger(LOGGER_NAME)
 
 
 #  request_props (port, ssl, verify, hosts )
 def process(params, template, request_props):
-
     logger.debug(
         'process params:\n'
         'params: {}\n'
@@ -39,7 +36,6 @@ def process(params, template, request_props):
 
     logger.debug('template type: \n {}'.format(type(template)))
     logger.debug('template: \n {}'.format(template))
-
 
     template_yaml = yaml.load(template)
     logger.debug('template_yaml: \n {}'.format(template_yaml))
@@ -56,7 +52,7 @@ def process(params, template, request_props):
 
         template_engine = Template(str(call))
         rendered_call = template_engine.render(params)
-        call = ast.literal_eval(rendered_call)  #unicode to dict
+        call = ast.literal_eval(rendered_call)  # unicode to dict
 
         logger.debug('rendered call: \n {}'.format(call))
 
@@ -85,9 +81,8 @@ def _send_request(call):
     name = call.get('name')
     data = call.get('data', {})
     method = call.get('method')
-    #TODO# add api key method option and client certificate verifications
-    #TODO# upload license call / check license when connection is on
-
+    # TODO# add api key method option and client certificate verifications
+    # TODO# upload license call / check license when connection is on
 
     fgt_instance = FortiOSAPI()
     if use_ssl == True:
@@ -96,9 +91,9 @@ def _send_request(call):
         fgt.https(status='off')
 
     fgt_instance.login(host,
-                      username,
-                      password,
-                      verify=verify_ssl)
+                       username,
+                       password,
+                       verify=verify_ssl)
 
     if method == "LICENSE":
         code, response = fgt_instance.license()
@@ -113,7 +108,7 @@ def _send_request(call):
         # if method == "REPLACE":
         # if method == "CLONE":
     if method == "SETOVERLAY":
-        code, response = fgt_instance.setoverlayconfig(**data, vdom=vdom, True)
+        code, response = fgt_instance.setoverlayconfig(data, vdom=vdom)
         logger.debug('---> Method: {} \n code: {} \n response: \n {}'.format(method, code, response))
 
     fgt_instance.logout()
@@ -129,8 +124,6 @@ def _process_response(code, response, call):
             _check_response_expectations(response, call, is_recoverable=True)
 
 
-
-
 def _check_response_status_code(code, response, call):
     response_code = code
     response_error_message = response
@@ -139,7 +132,6 @@ def _check_response_status_code(code, response, call):
 
     if not response:
         return
-
 
     if response_code == 1:
         logger.debug('Response code: {}'.format(response_code))
@@ -154,7 +146,7 @@ def _check_response_status_code(code, response, call):
         raise RecoverableResponseException('recoverable_code: {}'.format(response_code))
 
 
-def _check_response_expectations( response, call, is_recoverable):
+def _check_response_expectations(response, call, is_recoverable):
     response_content = response
 
     if is_recoverable:

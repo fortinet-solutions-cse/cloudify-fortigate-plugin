@@ -150,17 +150,13 @@ node_templates:
 
 
   fortigate:
-    type: cloudify.openstack.nodes.Fortigate
+    type: cloudify.openstack.nodes.Server
     properties:
       server:
         image_name: { get_input: fos_image }
         flavor_name: { get_input: fos_flavor }
         #useless key_name for fortinet but mandatory for openstack
         key_name: { get_input: key_name }
-        password: "fortinet"
-        user: "admin"
-        vdom: "root"
-        verify_ssl: False
       agent_config:
         install_method: none # do not install agent
       ##openstack_config: *openstack_config
@@ -202,8 +198,6 @@ node_templates:
                 set nat enable
                 next
                 end
-              files:
-               license: { get_secret: fgt_license }
     relationships:
       - target: fos_floating_ip
         type: cloudify.openstack.server_connected_to_floating_ip
@@ -216,3 +210,11 @@ node_templates:
 #      - target: my_security_group
 #        type: cloudify.openstack.server_connected_to_security_group
 #not compatible with portsecurity disabled
+
+  fortigate_api:
+    type: cloudify.fortinet.fortigate
+    properties:
+      host: { get_attribute: [fortigate, ip ] }
+      password: "fortinet"
+      username: "admin"
+      verify_ssl: False
