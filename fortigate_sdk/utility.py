@@ -88,9 +88,9 @@ def _send_request(call):
 
     fgt_instance = FortiOSAPI()
     if use_ssl == True:
-        fgt.https('on')
+        fgt_instance.https('on')
     else:
-        fgt.https(status='off')
+        fgt_instance.https(status='off')
 
     fgt_instance.login(host,
                        username,
