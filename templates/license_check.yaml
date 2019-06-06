@@ -1,0 +1,9 @@
+api_calls:
+  # first call
+  - path: /system/license
+    method: GET
+    data:
+      vdom: root
+    recoverable_code:
+    nonrecoverable_code:
+    response_translation: "response2"

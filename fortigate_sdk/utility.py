@@ -81,7 +81,8 @@ def _send_request(call):
     verify_ssl = call.get('verify_ssl', False)
     vdom = call.get('vdom', 'root')
 
-    url = call.get('path')
+    path = call.get('path')
+    name = call.get('name')
     data = call.get('data', {})
     method = call.get('method')
     #TODO# add api key method option and client certificate verifications
@@ -99,8 +100,12 @@ def _send_request(call):
                       password,
                       verify=verify_ssl)
 
+    if method == "LICENSE":
+        code, response = fgt_instance.license()
+        logger.debug('---> Method: {} \n code: {} \n response: \n {}'.format(method, code, response))
+
     if method == "GET":
-        code, response = fgt_instance.get(url)
+        code, response = fgt_instance.get(path, name, vdom=None, mkey=None, parameters=None)
         logger.debug('---> Method: {} \n code: {} \n response: \n {}'.format(method, code, response))
 
         # if method == "UPDATE":
