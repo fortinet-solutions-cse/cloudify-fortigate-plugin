@@ -36,8 +36,10 @@ def execute(params, template_file, **kwargs):
         'template_file: {}'.format(params, template_file))
 
     runtime_properties = ctx.instance.runtime_properties.copy()
+    ctx.logger.debug(
+        'Runtime properties: {}'.format(runtime_properties))
     #Replace host config with runtime propertie (instead of rearchitect the plugin)
-    params['host'] = ctx.instance.runtime_properties['ipv4_address']
+    #params['host'] = runtime_properties['ipv4_address']
     runtime_properties.update(params)
 
     ctx.logger.debug(
