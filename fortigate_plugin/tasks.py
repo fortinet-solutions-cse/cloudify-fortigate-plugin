@@ -38,10 +38,17 @@ def execute(params, template_file, **kwargs):
     runtime_properties = ctx.instance.runtime_properties.copy()
 
     ctx.logger.info(
-        'Runtime properties nics[0]: {}'.format(runtime_properties["nics"]))
+        'Runtime properties get_all: {}'.format(runtime_properties))
+    for ctxrel in ctx.instance.relationships:
+        ctx.logger.info(
+            'ctx instance: {}'.format(ctxrel.type))
+        ctx.logger.info(
+            'ctx instance: {}'.format(ctxrel.target.instance.runtime_properties))
+        ctx.logger.info(
+            'ctx instance: {}'.format(ctxrel.target.node.properties))
 
-    #Replace host config with runtime propertie (instead of rearchitect the plugin)
-#    params['host'] = params['fgt_ip']
+    # Replace host config with runtime propertie (instead of rearchitect the plugin)
+    params['host'] = ctx.instance.host_ip
     runtime_properties.update(params)
 
     ctx.logger.debug(
@@ -52,7 +59,6 @@ def execute(params, template_file, **kwargs):
 
     ctx.logger.debug(
         'request_props: {}'.format(request_props))
-
 
     try:
         ctx.instance.runtime_properties.update(
@@ -76,6 +82,7 @@ def execute(params, template_file, **kwargs):
         ctx.logger.info(
             'Exception traceback : {}'.format(traceback.format_exc()))
         raise NonRecoverableError(e)
+
 
 def execute_relation(params, template_file, **kwargs):
     if not params:
@@ -107,7 +114,6 @@ def execute_relation(params, template_file, **kwargs):
     ctx.logger.debug(
         'template_file: {}'.format(template_file))
 
-
     try:
         ctx.target.instance.runtime_properties.update(
             utility.process(
@@ -130,4 +136,3 @@ def execute_relation(params, template_file, **kwargs):
         ctx.logger.info(
             'Exception traceback : {}'.format(traceback.format_exc()))
         raise NonRecoverableError(e)
-

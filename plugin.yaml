@@ -41,7 +41,9 @@ node_types:
 
     interfaces:
       cloudify.interfaces.lifecycle:
-        configure:
+        start:
+          implementation: openstack.openstack_plugin.resources.compute.server.start
+        start:
           implementation: fortinet.fortigate_plugin.tasks.execute
           inputs:
             params:
